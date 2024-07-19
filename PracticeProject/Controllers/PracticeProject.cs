@@ -1,5 +1,6 @@
 using Core.StudentServices;
 using Data.Dtos;
+using Data.Dtos.Update_Dtos;
 using Data.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace PracticeProject.Controllers
                 return BadRequest("Student data is null");
             }
 
-            
+
             var createdStudent = await _studentService.AddStudentAsync(studentDto);
 
             //var createdStudentDto = _mapper.Map<StudentDto>(createdStudent);
@@ -32,44 +33,46 @@ namespace PracticeProject.Controllers
         }
 
         [HttpDelete("delete-student")]
-        public async Task<ActionResult> DeleteStudentAsync( Guid studentId)
+        public async Task<ActionResult> DeleteStudentAsync(Guid studentId)
         {
             var deletedStudent = await _studentService.RemoveStudentAsync(studentId);
-            if(!deletedStudent)
+            if (!deletedStudent)
             {
                 return BadRequest("Something went wrong");
             }
             return Ok("Successfully deleted student");
         }
 
-        [HttpPut("update-student-info/{studentId}")]
-        public async Task<ActionResult<StudentDto>> UpdateStudentInfoAsync(Guid studentId, [FromBody] StudentDto studentDto)
+        [HttpPatch("update-basic-info/{studentId}")]
+        public async Task<ActionResult> UpdateStudentBasicInfoAsync(Guid studentId, [FromBody] UpdateStudentBasicInfoDto dto)
         {
-            if (studentDto == null)
-            {
-                return BadRequest("StudentDto cannot be null");
-            }
-
-            var updatedStudent = await _studentService.UpdateStudentInfoAsync(studentId, studentDto);
-            if (updatedStudent == null)
-            {
-                return NotFound($"Student with ID {studentId} not found");
-            }
-
-            return Ok(updatedStudent);
+            var result = await _studentService.UpdateStudentBasicInfoAsync(studentId, dto);
+            if (!result) return NotFound($"Student with ID {studentId} not found");
+            return NoContent();
         }
 
+        [HttpPatch("update-contact-info/{studentId}")]
+        public async Task<ActionResult> UpdateContactInfoAsync(Guid studentId, [FromBody] UpdateContactInfoDto dto)
+        {
+            var result = await _studentService.UpdateContactInfoAsync(studentId, dto);
+            if (!result) return NotFound($"Student with ID {studentId} not found or Contact Info missing");
+            return NoContent();
+        }
 
-        // Optional: Action to retrieve a student by Id
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<StudentDto>> GetStudentById(Guid id)
-        //{
-        //    // Fetch student by id from database and return as StudentDto
-        //    // Example: var student = await _context.Students.FindAsync(id);
-        //    // Map student entity to StudentDto using AutoMapper
-        //    // return _mapper.Map<StudentDto>(student);
-        //}
+        [HttpPatch("update-academic-info/{studentId}")]
+        public async Task<ActionResult> UpdateAcademicInfoAsync(Guid studentId, [FromBody] UpdateAcademicInfoDto dto)
+        {
+            var result = await _studentService.UpdateAcademicInfoAsync(studentId, dto);
+            if (!result) return NotFound($"Student with ID {studentId} not found or Academic Info missing");
+            return NoContent();
+        }
+
+        [HttpPatch("update-advisor-info/{studentId}")]
+        public async Task<ActionResult> UpdateAdvisorInfoAsync(Guid studentId, [FromBody] UpdateAdvisorInfoDto dto)
+        {
+            var result = await _studentService.UpdateAdvisorInfoAsync(studentId, dto);
+            if (!result) return NotFound($"Student with ID {studentId} not found or Advisor Info missing");
+            return NoContent();
+        }
     }
-
-
 }
