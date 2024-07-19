@@ -2,6 +2,7 @@
 using Data.AppDbContext;
 using Data.Dtos;
 using Data.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,35 @@ namespace Core.StudentServices
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
             return student;
+        }
+
+        public async Task<bool> RemoveStudentAsync(Guid studentId)
+        {
+            // Find the student by their ID
+            var student = await _context.Students
+                                        .Include(s => s.ContactInfo)
+                                        .Include(s => s.AcademicInfo)
+                                        .Include(s => s.AdvisorInfo)
+                                        .FirstOrDefaultAsync(s => s.StudentId == studentId);
+            if (student == null)
+            {
+                return false; 
+            }
+        
+            if (student.ContactInfo != null)
+            {
+                _context.ContactInfos.Remove(student.ContactInfo);
+            }
+            if (student.AcademicInfo != null)
+            {
+                _context.AcademicInfos.Remove(student.AcademicInfo);
+            }
+            if (student.AdvisorInfo !=null)
+            {
+                _context.AdvisorInfos .Remove(student.AdvisorInfo);
+            }
+            await _context.SaveChangesAsync();
+            return true;
         }
 
     }

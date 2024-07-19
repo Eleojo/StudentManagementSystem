@@ -31,6 +31,17 @@ namespace PracticeProject.Controllers
             return Ok("Succesfully Added Student");
         }
 
+        [HttpDelete("delete-student")]
+        public async Task<ActionResult> DeleteStudentAsync( Guid studentId)
+        {
+            var deletedStudent = await _studentService.RemoveStudentAsync(studentId);
+            if(!deletedStudent)
+            {
+                return BadRequest("Something went wrong");
+            }
+            return Ok("Successfully deleted student");
+        }
+
         // Optional: Action to retrieve a student by Id
         //[HttpGet("{id}")]
         //public async Task<ActionResult<StudentDto>> GetStudentById(Guid id)
