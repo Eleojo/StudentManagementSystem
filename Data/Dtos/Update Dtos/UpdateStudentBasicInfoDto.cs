@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.Dtos.Update_Dtos
 {
-    public class UpdateStudentBasicDto
+    public class UpdateStudentBasicInfoDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

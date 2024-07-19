@@ -13,7 +13,7 @@ namespace PracticeProject
             CreateMap<ContactInfoDto, ContactInfo>().ReverseMap();
             CreateMap<AcademicInfoDto, AcademicInfo>().ReverseMap();
             CreateMap<AdvisorInfoDto, AdvisorInfo>().ReverseMap();
-            CreateMap<UpdateStudentBasicDto, Student>().ReverseMap();
+            CreateMap<UpdateStudentBasicInfoDto, Student>().ReverseMap();
             CreateMap<UpdateContactInfoDto,ContactInfo>().ReverseMap();
             CreateMap<UpdateAcademicInfoDto,AcademicInfo>().ReverseMap();
             CreateMap<UpdateAdvisorInfoDto,AdvisorInfo>().ReverseMap();
