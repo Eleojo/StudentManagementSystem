@@ -42,6 +42,24 @@ namespace PracticeProject.Controllers
             return Ok("Successfully deleted student");
         }
 
+        [HttpPut("update-student-info/{studentId}")]
+        public async Task<ActionResult<StudentDto>> UpdateStudentInfoAsync(Guid studentId, [FromBody] StudentDto studentDto)
+        {
+            if (studentDto == null)
+            {
+                return BadRequest("StudentDto cannot be null");
+            }
+
+            var updatedStudent = await _studentService.UpdateStudentInfoAsync(studentId, studentDto);
+            if (updatedStudent == null)
+            {
+                return NotFound($"Student with ID {studentId} not found");
+            }
+
+            return Ok(updatedStudent);
+        }
+
+
         // Optional: Action to retrieve a student by Id
         //[HttpGet("{id}")]
         //public async Task<ActionResult<StudentDto>> GetStudentById(Guid id)
