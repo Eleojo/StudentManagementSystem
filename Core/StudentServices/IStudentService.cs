@@ -5,7 +5,8 @@ namespace Core.StudentServices
 {
     public interface IStudentService
     {
-        Task<Student> AddStudentAsync(StudentDto studentDto);
+        Task<StudentDto> AddStudentAsync(StudentDto studentDto);
         Task<bool> RemoveStudentAsync(Guid studentId);
+        Task<StudentDto> UpdateStudentInfoAsync(Guid studentId, StudentDto studentDto);
     }
 }

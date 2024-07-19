@@ -22,7 +22,7 @@ namespace Core.StudentServices
             _mapper = mapper;
         }
 
-        public async Task<Student> AddStudentAsync(StudentDto studentDto)
+        public async Task<StudentDto> AddStudentAsync(StudentDto studentDto)
         {
             var student = _mapper.Map<Student>(studentDto);
             student.StudentId = Guid.NewGuid();
@@ -53,7 +53,7 @@ namespace Core.StudentServices
 
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
-            return student;
+            return studentDto;
         }
 
         public async Task<bool> RemoveStudentAsync(Guid studentId)
@@ -79,12 +79,57 @@ namespace Core.StudentServices
             }
             if (student.AdvisorInfo !=null)
             {
-                _context.AdvisorInfos .Remove(student.AdvisorInfo);
+                _context.AdvisorInfos.Remove(student.AdvisorInfo);
             }
             await _context.SaveChangesAsync();
             return true;
         }
 
+        public async Task<StudentDto> UpdateStudentInfoAsync(Guid studentId, StudentDto studentDto)
+        {
+            var student = await _context.Students.Include(s => s.ContactInfo)
+                              .Include (s => s.AcademicInfo)
+                              .Include(s=> s.AdvisorInfo)
+                              .FirstOrDefaultAsync(s=> s.StudentId == studentId);
+
+            if(student == null)
+            {
+                return null;
+            }
+
+            //Update student basic info
+            student.FirstName = studentDto.FirstName;
+            student.LastName = studentDto.LastName;
+            student.Gender = studentDto.Gender;
+            student.DateOfBirth = studentDto.DateOfBirth;
+
+            if (student.ContactInfo != null && studentDto.ContactInfo != null)
+            {
+                student.AcademicInfo.GPA = studentDto.AcademicInfo.GPA;
+                student.AcademicInfo.Major = studentDto.AcademicInfo.Major;
+                student.AcademicInfo.Course = studentDto.AcademicInfo.Course;
+                student.AcademicInfo.YearOfStudy = studentDto.AcademicInfo.YearOfStudy;
+                student.AcademicInfo.Minor = studentDto.AcademicInfo.Minor;
+            }
+
+            if(student.ContactInfo != null && studentDto.ContactInfo != null)
+            {
+                student.ContactInfo.Email = studentDto.ContactInfo.Email;   
+                student.ContactInfo.Address = studentDto.ContactInfo.Address;
+                student.ContactInfo.PhoneNumber = studentDto.ContactInfo.PhoneNumber;
+            }
+            if( student.AdvisorInfo != null && studentDto.AdvisorInfo != null)
+            {
+                student.AdvisorInfo.AdvisorFirstName = studentDto.FirstName;
+                student.AdvisorInfo.AdvisorLastName = studentDto.LastName;
+            }
+
+            await _context.SaveChangesAsync();
+            var updatedStudentInfo = _mapper.Map<StudentDto>(student);
+            return updatedStudentInfo;
+        }
+
     }
+
 
 }
